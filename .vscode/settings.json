@@ -1,5 +1,4 @@
 {
-	"editor.insertSpaces": false,
 	"test-runner-for-cucumber": {
 		"tool": "cucumberjs",
 		"script": "npx cucumber-js -c cucumber.js src/test/resources/features/**/*.feature"
