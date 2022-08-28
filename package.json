@@ -3,16 +3,15 @@
 	"displayName": "Test Runner for Cucumber",
 	"description": "Test Runner for Cucumber/Gherkin",
 	"version": "0.2.1",
-	"publisher": "Leon Qiu",
-	"private": true,
+	"publisher": "agilelog-org",
 	"license": "Apache License 2.0",
 	"icon": "images/cucumber-ext-v0.2.png",
 	"repository": {
 		"type": "git",
-		"url": ""
+		"url": "https://github.com/qzi/test-runner-for-cucumber"
 	},
 	"engines": {
-		"vscode": "^1.58.0"
+		"vscode": "^1.63.0"
 	},
 	"categories": [
 		"Programming Languages",
