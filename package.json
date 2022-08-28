@@ -22,7 +22,7 @@
 		"cucumber",
 		"bdd",
 		"gherkin",
-		"snippets"
+		"cucumber-js"
 	],
 	"activationEvents": [
 		"onCommand:cucumberRunner.runCurrentFeature"
