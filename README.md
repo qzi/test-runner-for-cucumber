@@ -12,7 +12,7 @@ Currently this extension support to run the `.feature` of Cucumber only using `c
 ## Usage
 
 Press `command+shift+p` to call command palete  
-and then choose `Cucumber Runner: runCurrentFeature.  
+and then choose `Cucumber Runner: runCurrentFeature   
      
 ​        
 
@@ -33,8 +33,9 @@ add `.vscode/settings.json` like this below:
 ```
 ​        
 ### cucumber-js configuration
-The configuration of cucumber-js itself can refer to the official guide. 
+The configuration of cucumber-js itself can refer to the official guide  
 https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md 
+
 ```json
 // sample configuration of cucumber.js
 export default {
@@ -46,6 +47,13 @@ export default {
 };
 ```
 ​        
+
+## Shortcut configuration
+Navigate to the `Code` -> `Preference` ->​ `Shortcut`,  
+search the command `Cucumber Runner: runCurrentFeature`  
+and then assign the shortcut to the command  
+
+
 ## To do list
 * support run by scenario
 * support run other languages like java if possible
