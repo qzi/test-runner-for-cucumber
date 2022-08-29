@@ -1,19 +1,20 @@
 # Test Runner for Cucumber
 
 This vscode extension intend to run the Cucumber program easily.
-                    
-
+​        
+​        
 ## Features
-
 Currently this extension support to run the `.feature` of Cucumber only using `cucumber-js` and javascript.
-      
+​        
+        
+​        
     
 ## Usage
 
 Press `command+shift+p` to call command palete  
 and then choose `Cucumber Runner: runCurrentFeature.  
      
-
+​        
 
 ## Pre-requisites
 This experimental extension is designed for cucumber-js only currently,  
@@ -30,14 +31,26 @@ add `.vscode/settings.json` like this below:
 	}
 }
 ```
-
-
+​        
+### cucumber-js configuration
+The configuration of cucumber-js itself can refer to the official guide. 
+https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md 
+```json
+// sample configuration of cucumber.js
+export default {
+  import: ["src/test/**/*.js"],
+  // paths: ["src/test/**/*.feature"],
+  // strict: true,
+  publishQuiet: true,
+  forceExit: true
+};
+```
 ​        
 ## To do list
 * support run by scenario
 * support run other languages like java if possible
 
-    
+​        
 	
 ## References
 
