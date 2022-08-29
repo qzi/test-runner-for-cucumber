@@ -24,21 +24,21 @@ export const getCucumberRunnerObject = (): CucumberRunnerConfiguration => {
 	let cucumberRunnerConfiguration: CucumberRunnerConfiguration;
 	let currentPath = getProjectRoot();
 	console.log('Current Path: ', currentPath);
-	// vscode.workspace.getWorkspaceFolder(workspaceFolder);
-	// console.log('workspaceFolder:', vscode.workspace.getWorkspaceFolder(workspaceFolder));
 
 	try {
-		let settingsContent = fs.readFileSync(
+
+		let settings = JSON.parse(fs.readFileSync(
 			`${currentPath}/.vscode/settings.json`,
-			// `${vscode.workspace.getWorkspaceFolder(workspaceFolder)?.uri.fsPath}/.vscode/settings.json`,
 			'utf8'
-		);
-		console.log('Setting Content', settingsContent);
-		cucumberRunnerConfiguration = JSON.parse(settingsContent
-		)['test-runner-for-cucumber'];
+		))['test-runner-for-cucumber'];
+		if (settings === undefined) {
+			let defaultSettings = '{ "test-runner-for-cucumber": { "tool": "cucumberjs", "script": "npx cucumber-js -c cucumber.js src/test/resources/features/**/*.feature" } }';
+			cucumberRunnerConfiguration = JSON.parse(defaultSettings)["test-runner-for-cucumber"];
+		} else cucumberRunnerConfiguration = settings;
+
 	} catch (err) {
-		let message = 'Unknown Error'
-		if (err instanceof Error) message = err.message
+		let message = 'Unknown Error';
+		if (err instanceof Error) message = "Settings.json parse failed: \n" + err.message
 		vscode.window.showErrorMessage('unable to read cucumber-cucumberRunner configuration', message);
 		throw new Error(message);
 	}
@@ -186,3 +186,4 @@ const getCucumberJsFeatureExecutable = (
 	splitter[4] = `"${currentFeatureFilePath}"`;
 	return splitter.join(' ');
 };
+
