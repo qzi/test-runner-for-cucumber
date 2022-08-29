@@ -2,7 +2,7 @@
 	"name": "test-runner-for-cucumber",
 	"displayName": "Test Runner for Cucumber",
 	"description": "Test Runner for Cucumber/Gherkin",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"publisher": "agilelog-org",
 	"license": "Apache License 2.0",
 	"icon": "images/cucumber-ext-v0.2.png",
