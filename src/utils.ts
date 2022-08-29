@@ -26,16 +26,18 @@ export const getCucumberRunnerObject = (): CucumberRunnerConfiguration => {
 	console.log('Current Path: ', currentPath);
 
 	try {
-
-		let settings = JSON.parse(fs.readFileSync(
-			`${currentPath}/.vscode/settings.json`,
-			'utf8'
-		))['test-runner-for-cucumber'];
-		if (settings === undefined) {
+		let file = `${currentPath}/.vscode/settings.json`;
+		// Check that the file exists locally
+		if (!fs.existsSync(file)) {
+			console.log("settings.json not found");
 			let defaultSettings = '{ "test-runner-for-cucumber": { "tool": "cucumberjs", "script": "npx cucumber-js -c cucumber.js src/test/resources/features/**/*.feature" } }';
 			cucumberRunnerConfiguration = JSON.parse(defaultSettings)["test-runner-for-cucumber"];
-		} else cucumberRunnerConfiguration = settings;
-
+		} else {
+			cucumberRunnerConfiguration = JSON.parse(fs.readFileSync(
+				`${currentPath}/.vscode/settings.json`,
+				'utf8'
+			))['test-runner-for-cucumber'];
+		}
 	} catch (err) {
 		let message = 'Unknown Error';
 		if (err instanceof Error) message = "Settings.json parse failed: \n" + err.message
