@@ -21,7 +21,7 @@ This experimental extension is designed for cucumber-js only currently,
  ```shell
  > npm install @cucumber/cucumber npx
  ```
-add `.vscode/settings.json` like this below: 
+add `.vscode/settings.json` like this defalut setting(if no settings.json): 
 ```json
 {
 	"test-runner-for-cucumber": {
@@ -31,7 +31,7 @@ add `.vscode/settings.json` like this below:
 }
 ```
 ​        
-### cucumber-js configuration
+### Configuration of cucumber-js 
 The configuration of cucumber-js itself can refer to the official guide  
 https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md 
 
