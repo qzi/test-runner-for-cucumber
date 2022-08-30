@@ -2,7 +2,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { commandOutput, terminalOutput } from './extension';
+import { terminalOutput } from './extension';
 
 
 
@@ -15,37 +15,31 @@ export const startProcess = (command: string) => {
 	if (process) {
 		const msg = 'There is a command running right now. Terminate it before executing a new command?';
 		vscode.window.showWarningMessage(msg, 'Ok', 'Cancel').then((choice: any) => {
-			if (choice === 'Ok' && commandOutput) {
-				killActiveProcess(commandOutput);
+			if (choice === 'Ok' && terminalOutput) {
+				killActiveProcess(terminalOutput);
 			}
 		});
 		return;
 	}
 
-
-	commandOutput?.appendLine(`> Running command: ${command}`);
-
 	runShellCommand(command, vscode.workspace.rootPath)
 		.then(() => {
-			commandOutput?.appendLine(`> Command finished successfully.`);
+			console.log('> Command finished successfully.');
 		})
 		.catch((reason: any) => {
-			commandOutput?.appendLine(`> ERROR: ${reason}`);
+			console.log('> ERROR: ${reason}');
 		});
 };
 
 // Tries to kill the active process that is running a command.
-export const killActiveProcess = (commandOutput: vscode.OutputChannel) => {
+export const killActiveProcess = (terminalOutput: vscode.Terminal) => {
 	if (!process) return;
 
-	commandOutput.appendLine(`> Killing PID ${process.pid}...`);
+	terminalOutput.dispose();
+
 
 };
 
-// prints command output
-const printOutputDelegate = (data: any) => {
-	commandOutput?.append(data.toString());
-};
 
 // runs the shell command in output window
 const runShellCommand = (cmd: string, cwd: string | undefined) => {

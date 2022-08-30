@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { startProcess } from './executeCommand';
+import { startProcess } from './command';
 
 const workspaceFolder: vscode.Uri | any = vscode.window.activeTextEditor?.document.uri;
 
@@ -125,18 +125,14 @@ export const getScenarioName = () => {
  * @param cucumberRunnerConfiguration
  * @param scenarioName
  */
-export const createCommandToExecuteScenario = (scenarioName: string, tool: string): string => {
-	if (tool === 'cypress' && !scenarioName.includes('@')) {
-		vscode.window.showErrorMessage(
-			`Cypress cucumber preprocessor does not support running scenario by scenario name. Right click on the Tags and press 'Run Cucumber Scenario'`
-		);
-		throw new Error('Scenario Name incorrect. Please select scenario');
-	}
+export const createCommandToExecuteScenario = (cucumberRunnerConfiguration: CucumberRunnerConfiguration, scenarioName: string, tool: string): string => {
+
+	const currentFeatureFilePath: string | undefined = vscode.window.activeTextEditor?.document.uri.fsPath;
+
 	const toolCommands: Map<any, any> = new Map()
-		.set('protractor', `--cucumberOpts.name="${scenarioName}"`)
-		.set('webdriverio', `--cucumberOpts.name="${scenarioName}"`)
-		.set('cypress', `run -e TAGS="${scenarioName.split(/(\s+)/)[0]}"`)
-		.set('cucumberjs', `--name "${scenarioName}"`);
+
+		// .set('cucumberjs', `--name "${scenarioName}"`);
+		.set('cucumberjs', getCucumberJsScenarioExecutable(cucumberRunnerConfiguration, ` --name "${scenarioName}"`, currentFeatureFilePath));
 
 	if (toolCommands.get(tool) === undefined) {
 		vscode.window.showErrorMessage(
@@ -153,18 +149,11 @@ export const createCommandToExecuteScenario = (scenarioName: string, tool: strin
  */
 export const createCommandToExecuteFeature = (cucumberRunnerConfiguration: CucumberRunnerConfiguration): string => {
 	const currentFeatureFilePath: string | undefined = vscode.window.activeTextEditor?.document.uri.fsPath;
-	const currentRootFolderName: string | undefined = vscode.workspace.getWorkspaceFolder(workspaceFolder)?.name;
+	// const currentRootFolderName: string | undefined = vscode.workspace.getWorkspaceFolder(workspaceFolder)?.name;
 
 	const toolCommands = new Map()
-		.set('protractor', `--specs="${currentFeatureFilePath}"`)
-		.set('webdriverio', `--spec="${currentFeatureFilePath}"`)
-		.set(
-			'cypress',
-			`run -e GLOB="${currentFeatureFilePath?.replace(new RegExp('.*' + currentRootFolderName), '').substr(1)}"`
-		)
 		.set('cucumberjs', getCucumberJsFeatureExecutable(cucumberRunnerConfiguration, currentFeatureFilePath));
 
-	// console.log('toolCommands.get(tool):', toolCommands.get(cucumberRunnerConfiguration.tool));
 
 	if (currentFeatureFilePath === undefined && toolCommands.get(cucumberRunnerConfiguration.tool) === undefined) {
 		vscode.window.showErrorMessage(
@@ -186,6 +175,23 @@ const getCucumberJsFeatureExecutable = (
 ) => {
 	const splitter = cucumberRunnerConfiguration.script.split(' ');
 	splitter[4] = `"${currentFeatureFilePath}"`;
+	return splitter.join(' ');
+};
+
+/**
+ *
+ * @param cucumberRunnerConfiguration
+ * @param currentScenarioName
+ * @param currentFeatureFilePath
+ */
+const getCucumberJsScenarioExecutable = (
+	cucumberRunnerConfiguration: CucumberRunnerConfiguration,
+	currentScenarioName: string | undefined,
+	currentFeatureFilePath: String | undefined
+) => {
+	const splitter = cucumberRunnerConfiguration.script.split(' ');
+	splitter[4] = `"${currentScenarioName}"`;
+	splitter[5] = `"${currentFeatureFilePath}"`;
 	return splitter.join(' ');
 };
 

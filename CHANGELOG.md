@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.5] - 202-08-31
+## [0.6.1] - 202-08-31
+
+### Added
+
+- support the feature to run current scenario
+
+
+## [0.5.5] - 202-08-30
 
 ### Added
 
