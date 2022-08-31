@@ -2,17 +2,18 @@
 
 This vscode extension intend to run the Cucumber program easily.
 ​        
-​        
-## Features
-Currently this extension support `cucumber-js` and javascript/typescript only
-​        
- | command                           | remark                                                     |
- |-----------------------------------|------------------------------------------------------------|
- | cucumberRunner.runCurrentFeature  | run the current feature file                               |
- | cucumberRunner.runCurrentScenario | run the cucumber scenario which line your mice is pointing |
-
-        ​        
     
+## Features
+Currently this extension support `cucumber-js` and javascript/typescript only  
+​
+| command                           | remark                                                     |
+|:----------------------------------|:-----------------------------------------------------------|
+| cucumberRunner.runCurrentFeature  | run the current feature file                               |
+| cucumberRunner.runCurrentScenario | run the cucumber scenario which line your mice is pointing |
+
+
+
+
 ## Usage
 
 Press `command+shift+p` to call command palete  
