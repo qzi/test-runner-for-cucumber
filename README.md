@@ -4,8 +4,13 @@ This vscode extension intend to run the Cucumber program easily.
 ​        
 ​        
 ## Features
-Currently this extension support to run the `.feature` of Cucumber only using `cucumber-js` and javascript.
+Currently this extension support `cucumber-js` and javascript/typescript only
 ​        
+ | command                           | remark                                                     |
+ |-----------------------------------|------------------------------------------------------------|
+ | cucumberRunner.runCurrentFeature  | run the current feature file                               |
+ | cucumberRunner.runCurrentScenario | run the cucumber scenario which line your mice is pointing |
+
         ​        
     
 ## Usage
@@ -52,11 +57,7 @@ Navigate to the `Code` -> `Preference` ->​ `Shortcut`,
 search the command `Cucumber Runner: runCurrentFeature`  
 and then assign the shortcut to the command  
 
-​        
-
-## To do list
-* support run by scenario
-* support run other languages like java if possible
+​       
 
 ​        
 	
