@@ -1,6 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import { TestFile, testData } from './testTree';
 import {
 	getCucumberRunnerObject,
 	createCommandToExecuteFeature,
@@ -14,12 +15,54 @@ import {
 export let terminalOutput: vscode.Terminal | null = null;
 
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 
 	terminalOutput = vscode.window.createTerminal('Cucumber Runner');
 	context.subscriptions.push(runFeatureDisposable);
 	context.subscriptions.push(runScenarioDisposable);
 
+
+	const ctrl = vscode.tests.createTestController('helloWorldTests', 'Hello World Tests');
+	context.subscriptions.push(ctrl);
+
+	context.subscriptions.push(
+		vscode.workspace.onDidOpenTextDocument(updateNodeForDocument),
+		vscode.workspace.onDidChangeTextDocument(e => updateNodeForDocument(e.document)),
+	);
+
+
+
+	function updateNodeForDocument(e: vscode.TextDocument) {
+		if (e.uri.scheme !== 'file') {
+			return;
+		}
+
+		if (!e.uri.path.endsWith('.feature')) {
+			return;
+		}
+
+		const { file, data } = getOrCreateFile(ctrl, e.uri);
+		data.updateFromContents(ctrl, e.getText(), file);
+	}
+
+}
+
+
+
+function getOrCreateFile(controller: vscode.TestController, uri: vscode.Uri) {
+	const existing = controller.items.get(uri.toString());
+	if (existing) {
+		return { file: existing, data: testData.get(existing) as TestFile };
+	}
+
+	const file = controller.createTestItem(uri.toString(), uri.path.split('/').pop()!, uri);
+	controller.items.add(file);
+
+	const data = new TestFile();
+	testData.set(file, data);
+
+	file.canResolveChildren = true;
+	return { file, data };
 }
 
 const runScenarioDisposable = vscode.commands.registerCommand('cucumberRunner.runCurrentScenario', () => {
