@@ -36,8 +36,6 @@ export const killActiveProcess = (terminalOutput: vscode.Terminal) => {
 	if (!process) return;
 
 	terminalOutput.dispose();
-
-
 };
 
 
