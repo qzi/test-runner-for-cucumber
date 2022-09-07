@@ -12,11 +12,20 @@ export const testData = new WeakMap<vscode.TestItem, ScenarioTestData>();
 
 let generationCounter = 0;
 
-export interface ScenarioCommand {
+export class CommandWrap {
+
 	tool: string;
 	script: string;
-	scenarioCommand: string;
+	execCommand: string;
+
+
+	constructor(tool: string, script: string, execCommand: string) {
+		this.tool = tool;
+		this.script = script;
+		this.execCommand = execCommand;
+	}
 }
+
 
 export const getContentFromFilesystem = async (uri: vscode.Uri) => {
 	try {
@@ -31,7 +40,7 @@ export const getContentFromFilesystem = async (uri: vscode.Uri) => {
 export class TestFile {
 	public didResolve = false;
 
-	public async updateFromDisk(controller: vscode.TestController, item: vscode.TestItem, command: ScenarioCommand) {
+	public async updateFromDisk(controller: vscode.TestController, item: vscode.TestItem, command: CommandWrap) {
 		try {
 			const content = await getContentFromFilesystem(item.uri!);
 			item.error = undefined;
@@ -45,7 +54,7 @@ export class TestFile {
 	 * Parses the tests from the input text, and updates the tests contained
 	 * by this file to be those from the text,
 	 */
-	public updateFromContents(controller: vscode.TestController, content: string, item: vscode.TestItem, command: ScenarioCommand) {
+	public updateFromContents(controller: vscode.TestController, content: string, item: vscode.TestItem, command: CommandWrap) {
 		const ancestors = [{ item, children: [] as vscode.TestItem[] }];
 		const thisGeneration = generationCounter++;
 		this.didResolve = true;
@@ -71,7 +80,7 @@ export class TestFile {
 			// },
 			OnScenario: (id, label) => {
 				const parent = ancestors[ancestors.length - 1];
-				const data = new TestCase(command.script, command.tool, command.scenarioCommand, "tbc", "tbc");
+				const data = new TestCase(command.script, command.tool, command.execCommand, "tbc", "tbc");
 				const tcase = controller.createTestItem((id + 1).toString(), label, item.uri);
 				testData.set(tcase, data);
 				parent.children.push(tcase);

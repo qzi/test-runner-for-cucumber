@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 202-09-07
+
+### Added
+
+- add the test hierarchy in Test Explorer
+
 ## [0.7.1] - 202-08-31
 
 ### Changed

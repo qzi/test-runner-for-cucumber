@@ -1,7 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { TestFile, testData, TestCase, ScenarioCommand } from './testTree';
+import { TestFile, testData, TestCase, CommandWrap } from './testTree';
 import {
 	getCucumberRunnerObject,
 	createCommandToExecuteFeature,
@@ -31,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.onDidChangeTextDocument(e => updateNodeForDocument(e.document)),
 	);
 
-	let execCommand: ScenarioCommand;
+	let execCommand: CommandWrap;
 	function updateNodeForDocument(e: vscode.TextDocument) {
 		if (e.uri.scheme !== 'file') {
 			return;
@@ -45,15 +45,16 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		const cucumberRunnerObject = getCucumberRunnerObject();
 		const cucumberRunnerScript: string = getCucumberRunnerScript(cucumberRunnerObject);
-		const currentScenarioName: string = getScenarioName();
+		// TO DO
+		const currentScenarioName: string = " ";
+		// const currentScenarioName: string = getScenarioName();
 		const toolUsed: string = getCucumberRunnerTool(cucumberRunnerObject);
 		const scenarioCommand: string = createCommandToExecuteScenario(cucumberRunnerObject, currentScenarioName, toolUsed);
 
-		let execCommand: ScenarioCommand = JSON.parse('{ toolUsed, cucumberRunnerScript, scenarioCommand }');
-
+		let commandWrap: CommandWrap = new CommandWrap(toolUsed, cucumberRunnerScript, scenarioCommand);
 
 		const { file, data } = getOrCreateFile(testController, e.uri);
-		data.updateFromContents(testController, e.getText(), file, execCommand);
+		data.updateFromContents(testController, e.getText(), file, commandWrap);
 	}
 	// run the tests
 
