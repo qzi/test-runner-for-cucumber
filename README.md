@@ -30,10 +30,12 @@ This experimental extension is designed for cucumber-js only currently,
 add `.vscode/settings.json` like this defalut setting(if no settings.json): 
 ```json
 {
-	"test-runner-for-cucumber": {
-		"tool": "cucumberjs",
-		"script": "npx cucumber-js -c cucumber.js src/test/resources/features/**/*.feature"
-	}
+    "test-runner-for-cucumber": {
+        "language": "javascript",
+        "tool": "cucumber-js",
+        "script": "npx cucumber-js -c cucumber.js src/test/resources/features/**/*.feature"
+
+    }
 }
 ```
 ​        

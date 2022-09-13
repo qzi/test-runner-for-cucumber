@@ -5,8 +5,10 @@ import { startProcess } from './command';
 const workspaceFolder: vscode.Uri | any = vscode.window.activeTextEditor?.document.uri;
 
 interface CucumberRunnerConfiguration {
+	language: string;
 	tool: string;
 	script: string;
+
 }
 
 
@@ -21,36 +23,47 @@ const getProjectRoot = () => {
  * Collect Test Runner for Cucumber configuration object from .vscode/settings.json
  */
 export const getCucumberRunnerObject = (): CucumberRunnerConfiguration => {
-	let cucumberRunnerConfiguration: CucumberRunnerConfiguration;
+	let defaultSettings: string = '{ "test-runner-for-cucumber": {} }';
+	let cucumberRunnerConfiguration: CucumberRunnerConfiguration = JSON.parse(defaultSettings)["test-runner-for-cucumber"];
+
+
+
 	let currentPath = getProjectRoot();
 	console.log('Current Path: ', currentPath);
+	let file = `${currentPath}/.vscode/settings.json`;
+	// skipped if setting is not correct
+	let isSkipped: boolean = true;
+	// Check that the file exists locally
+	if (!fs.existsSync(file)) {
+		if (!isSkipped) { throw new Error('Test Runner for Cucumber: .vscode/settings.json is not found \n'); }
 
-	try {
-		let file = `${currentPath}/.vscode/settings.json`;
-		// Check that the file exists locally
-		if (!fs.existsSync(file)) {
-			console.log("settings.json not found");
-			let defaultSettings = '{ "test-runner-for-cucumber": { "tool": "cucumberjs", "script": "npx cucumber-js -c cucumber.js src/test/resources/features/**/*.feature" } }';
-			cucumberRunnerConfiguration = JSON.parse(defaultSettings)["test-runner-for-cucumber"];
-		} else {
-			cucumberRunnerConfiguration = JSON.parse(fs.readFileSync(
+	} else {
+		try {
+			defaultSettings = fs.readFileSync(
 				`${currentPath}/.vscode/settings.json`,
 				'utf8'
-			))['test-runner-for-cucumber'];
+			);
+
+			try {
+				cucumberRunnerConfiguration = JSON.parse(defaultSettings)['test-runner-for-cucumber'];
+				return cucumberRunnerConfiguration;
+			} catch (err) {
+				// vscode.window.showErrorMessage('Cucumber Runner configuration not found in .vscode/settings.json');
+				if (!isSkipped) {
+					throw new Error('Test Runner for Cucumber: configuration is not correct in .vscode/settings.json \n');
+				}
+			}
+
+		} catch (err) {
+			let message = 'Unknown Error';
+			if (err instanceof Error) message = "Test Runner for Cucumber: .vscode/settings.json parse failed: \n" + err.message;
+			// vscode.window.showErrorMessage('unable to read cucumber runner configuration', message);
+			throw new Error(message);
 		}
-	} catch (err) {
-		let message = 'Unknown Error';
-		if (err instanceof Error) message = "Settings.json parse failed: \n" + err.message
-		vscode.window.showErrorMessage('unable to read cucumber-cucumberRunner configuration', message);
-		throw new Error(message);
+
 	}
 
-	if (cucumberRunnerConfiguration) {
-		return cucumberRunnerConfiguration;
-	} else {
-		vscode.window.showErrorMessage('Cucumber Runner configuration not found in .vscode/settings.json');
-		throw new Error('Cucumber Runner configuration not found in .vscode/settings.json');
-	}
+	return cucumberRunnerConfiguration;
 };
 
 /**
@@ -76,15 +89,14 @@ export const getCucumberRunnerTool = (cucumberRunnerConfig: CucumberRunnerConfig
 export const executeCucumberRunnerCommand = (script: string, command: string, tool?: string) => {
 	// const terminal = getActiveTerminal();
 	// terminal?.show();
-	const executableCommand: string = tool === 'cucumberjs' ? `${command}` : `${script} ${command}`;
-
-	if (tool === 'cucumberjs') {
-		const terminal = getActiveTerminal();
+	const executableCommand: string = (tool == 'cucumber-js') ? `${command}` : `${script} ${command}`;
+	const terminal = getActiveTerminal();
+	if (tool == 'cucumber-js') {
 		terminal?.show();
-		// terminal.sendText('clear');
 		terminal.sendText(executableCommand);
 	} else {
-		startProcess(executableCommand);
+		// startProcess(executableCommand);
+		terminal.sendText('clear');
 	}
 };
 
@@ -129,18 +141,25 @@ export const createCommandToExecuteScenario = (cucumberRunnerConfiguration: Cucu
 
 	const currentFeatureFilePath: string | undefined = vscode.window.activeTextEditor?.document.uri.fsPath;
 
-	const toolCommands: Map<any, any> = new Map()
+	if (typeof currentFeatureFilePath == undefined || typeof tool == undefined || cucumberRunnerConfiguration == undefined)
+		return "";
+	else {
+		const toolCommands: Map<string, string> = new Map();
 
-		// .set('cucumberjs', `--name "${scenarioName}"`);
-		.set('cucumberjs', getCucumberJsScenarioExecutable(cucumberRunnerConfiguration, ` --name "${scenarioName}"`, currentFeatureFilePath));
+		if (cucumberRunnerConfiguration.tool == "cucumber-js" && cucumberRunnerConfiguration.language == "javascript" || cucumberRunnerConfiguration.language == "typescript") {
+			toolCommands.set('cucumber-js', getCucumberJsScenarioExecutable(cucumberRunnerConfiguration,
+				` --name "${scenarioName}"`, currentFeatureFilePath!));
+			let commandeToExecuteScenario: string | undefined = toolCommands.get(cucumberRunnerConfiguration.tool);
+			return (typeof commandeToExecuteScenario !== 'undefined') ? commandeToExecuteScenario : "";
+		} else {
+			vscode.window.showErrorMessage(
+				`un-supported tool found: ${tool}.Cucumber runner configuration tool only accept: cucumber-js.`
+			);
+			throw new Error('Scenario Name incorrect. Please select scenario');
+		}
 
-	if (toolCommands.get(tool) === undefined) {
-		vscode.window.showErrorMessage(
-			`un-supported tool found: ${tool}.Cucumber runner configuration tool only accept: protractor/webdriverio/cypress/cucumberjs.`
-		);
-		throw new Error('Scenario Name incorrect. Please select scenario');
 	}
-	return toolCommands.get(tool);
+
 };
 
 /**
@@ -152,7 +171,7 @@ export const createCommandToExecuteFeature = (cucumberRunnerConfiguration: Cucum
 	// const currentRootFolderName: string | undefined = vscode.workspace.getWorkspaceFolder(workspaceFolder)?.name;
 
 	const toolCommands = new Map()
-		.set('cucumberjs', getCucumberJsFeatureExecutable(cucumberRunnerConfiguration, currentFeatureFilePath));
+		.set('cucumber-js', getCucumberJsFeatureExecutable(cucumberRunnerConfiguration, currentFeatureFilePath));
 
 
 	if (currentFeatureFilePath === undefined && toolCommands.get(cucumberRunnerConfiguration.tool) === undefined) {
@@ -186,10 +205,10 @@ const getCucumberJsFeatureExecutable = (
  */
 const getCucumberJsScenarioExecutable = (
 	cucumberRunnerConfiguration: CucumberRunnerConfiguration,
-	currentScenarioName: string | undefined,
-	currentFeatureFilePath: String | undefined
-) => {
-	const splitter = cucumberRunnerConfiguration.script.split(' ');
+	currentScenarioName: string,
+	currentFeatureFilePath: string
+): string => {
+	const splitter: string[] = cucumberRunnerConfiguration.script.split(' ');
 	splitter[4] = `"${currentScenarioName}"`;
 	splitter[5] = `"${currentFeatureFilePath}"`;
 	return splitter.join(' ');

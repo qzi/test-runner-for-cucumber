@@ -44,17 +44,20 @@ export async function activate(context: vscode.ExtensionContext) {
 		// command execution preparation
 
 		const cucumberRunnerObject = getCucumberRunnerObject();
-		const cucumberRunnerScript: string = getCucumberRunnerScript(cucumberRunnerObject);
-		// TO DO
-		const currentScenarioName: string = " ";
-		// const currentScenarioName: string = getScenarioName();
-		const toolUsed: string = getCucumberRunnerTool(cucumberRunnerObject);
-		const scenarioCommand: string = createCommandToExecuteScenario(cucumberRunnerObject, currentScenarioName, toolUsed);
+		if (Object.keys(cucumberRunnerObject).length != 0) {
+			const cucumberRunnerScript: string = getCucumberRunnerScript(cucumberRunnerObject);
+			// TO DO
+			// const currentScenarioName: string = " ";
+			// const currentScenarioName: string = getScenarioName();
+			const toolUsed: string = getCucumberRunnerTool(cucumberRunnerObject);
+			const scenarioCommand: string = createCommandToExecuteScenario(cucumberRunnerObject, "", toolUsed);
 
-		let commandWrap: CommandWrap = new CommandWrap(toolUsed, cucumberRunnerScript, scenarioCommand);
+			let commandWrap: CommandWrap = new CommandWrap(toolUsed, cucumberRunnerScript, scenarioCommand);
+			// TO DO: seperate the file info 
+			const { file, data } = getOrCreateFile(testController, e.uri);
+			data.updateFromContents(testController, e.getText(), file, commandWrap);
+		}
 
-		const { file, data } = getOrCreateFile(testController, e.uri);
-		data.updateFromContents(testController, e.getText(), file, commandWrap);
 	}
 	// run the tests
 
