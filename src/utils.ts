@@ -23,47 +23,39 @@ const getProjectRoot = () => {
  * Collect Test Runner for Cucumber configuration object from .vscode/settings.json
  */
 export const getCucumberRunnerObject = (): CucumberRunnerConfiguration => {
-	let defaultSettings = '{ "test-runner-for-cucumber": {} }';
-	let cucumberRunnerConfiguration: CucumberRunnerConfiguration = JSON.parse(defaultSettings)["test-runner-for-cucumber"];
-
-
+	const defaultSettings = '{}';
+	// const defaultSettings = '{"tool":"","language":"","script":""}';
+	let cucumberRunnerConfiguration: CucumberRunnerConfiguration = JSON.parse(defaultSettings);
+	let fileContent: string;
 
 	const currentPath = getProjectRoot();
-	console.log('Current Path: ', currentPath);
+	// console.log('Current Path: ', currentPath);
 	const file = `${currentPath}/.vscode/settings.json`;
-	// skipped if setting is not correct
-	const isSkipped = true;
+
 	// Check that the file exists locally
 	if (!fs.existsSync(file)) {
-		if (!isSkipped) { throw new Error('Test Runner for Cucumber: .vscode/settings.json is not found \n'); }
+		throw new Error('Test Runner for Cucumber: .vscode/settings.json is not found \n');
 
 	} else {
 		try {
-			defaultSettings = fs.readFileSync(
+
+			cucumberRunnerConfiguration = JSON.parse(fs.readFileSync(
 				`${currentPath}/.vscode/settings.json`,
 				'utf8'
-			);
-
-			try {
-				cucumberRunnerConfiguration = JSON.parse(defaultSettings)['test-runner-for-cucumber'];
-				return cucumberRunnerConfiguration;
-			} catch (err) {
-				// vscode.window.showErrorMessage('Cucumber Runner configuration not found in .vscode/settings.json');
-				if (!isSkipped) {
-					throw new Error('Test Runner for Cucumber: configuration is not correct in .vscode/settings.json \n');
-				}
-			}
+			))['test-runner-for-cucumber'];
 
 		} catch (err) {
 			let message = 'Unknown Error';
 			if (err instanceof Error) message = "Test Runner for Cucumber: .vscode/settings.json parse failed: \n" + err.message;
 			// vscode.window.showErrorMessage('unable to read cucumber runner configuration', message);
-			throw new Error(message);
+			// throw new Error(message);
+			console.error(message);
 		}
 
-	}
 
+	}
 	return cucumberRunnerConfiguration;
+
 };
 
 /**

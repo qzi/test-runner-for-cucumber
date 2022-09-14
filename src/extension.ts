@@ -44,7 +44,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		// command execution preparation
 
 		const cucumberRunnerObject = getCucumberRunnerObject();
-		if (Object.keys(cucumberRunnerObject).length != 0) {
+		if (cucumberRunnerObject !== undefined) {
+			// if (Object.keys(cucumberRunnerObject).length != 0) {
 			const cucumberRunnerScript: string = getCucumberRunnerScript(cucumberRunnerObject);
 			// TO DO
 			// const currentScenarioName: string = " ";
