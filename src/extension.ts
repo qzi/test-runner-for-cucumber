@@ -52,7 +52,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			const toolUsed: string = getCucumberRunnerTool(cucumberRunnerObject);
 			const scenarioCommand: string = createCommandToExecuteScenario(cucumberRunnerObject, "", toolUsed);
 
-			let commandWrap: CommandWrap = new CommandWrap(toolUsed, cucumberRunnerScript, scenarioCommand);
+			const commandWrap: CommandWrap = new CommandWrap(toolUsed, cucumberRunnerScript, scenarioCommand);
 			// TO DO: seperate the file info 
 			const { file, data } = getOrCreateFile(testController, e.uri);
 			data.updateFromContents(testController, e.getText(), file, commandWrap);
@@ -95,7 +95,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 			}
 
-		}
+		};
 
 		const runTestQueue = async () => {
 
@@ -123,7 +123,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		discoverTests(request.include ?? gatherTestItems(testController.items)).then(runTestQueue);
 
-	}
+	};
 
 	// const runProfile = testController.createRunProfile(
 	// 	'Run',

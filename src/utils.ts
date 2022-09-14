@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { startProcess } from './command';
+// import { startProcess } from './command';
 
 const workspaceFolder: vscode.Uri | any = vscode.window.activeTextEditor?.document.uri;
 
@@ -23,12 +23,12 @@ const getProjectRoot = () => {
  * Collect Test Runner for Cucumber configuration object from .vscode/settings.json
  */
 export const getCucumberRunnerObject = (): CucumberRunnerConfiguration => {
-	let defaultSettings: string = '{ "test-runner-for-cucumber": {} }';
+	let defaultSettings = '{ "test-runner-for-cucumber": {} }';
 	let cucumberRunnerConfiguration: CucumberRunnerConfiguration = JSON.parse(defaultSettings)["test-runner-for-cucumber"];
 
 
 
-	let currentPath = getProjectRoot();
+	const currentPath = getProjectRoot();
 	console.log('Current Path: ', currentPath);
 	let file = `${currentPath}/.vscode/settings.json`;
 	// skipped if setting is not correct
@@ -176,7 +176,7 @@ export const createCommandToExecuteFeature = (cucumberRunnerConfiguration: Cucum
 
 	if (currentFeatureFilePath === undefined && toolCommands.get(cucumberRunnerConfiguration.tool) === undefined) {
 		vscode.window.showErrorMessage(
-			`un-supported tool found: ${cucumberRunnerConfiguration.tool}.Cucumber runner configuration tool only accept: protractor/webdriverio/cypress/cucumberjs.`
+			`un-supported tool found: ${cucumberRunnerConfiguration.tool}.Cucumber runner configuration tool only accept: cucumber-js.`
 		);
 		throw new Error('Scenario Name incorrect. Please select scenario');
 	}

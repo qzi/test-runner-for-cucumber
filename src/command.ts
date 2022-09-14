@@ -7,7 +7,7 @@ import { terminalOutput } from './extension';
 
 
 
-let process: any = null;
+const process: any = null;
 let terminal: vscode.Terminal | null;
 // starts the process of executing command in vs code output window
 export const startProcess = (command: string) => {
@@ -42,7 +42,7 @@ export const killActiveProcess = (terminalOutput: vscode.Terminal) => {
 // runs the shell command in output window
 const runShellCommand = (cmd: string, cwd: string | undefined) => {
 	return new Promise<void>((accept, reject) => {
-		var opts: any = {};
+		const opts: any = {};
 		if (vscode.workspace) {
 			opts.cwd = cwd;
 		}
