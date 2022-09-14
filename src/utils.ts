@@ -13,9 +13,9 @@ interface CucumberRunnerConfiguration {
 
 
 const getProjectRoot = () => {
-	let editor = vscode.window.activeTextEditor;
-	let currentDocument = editor?.document.uri;
-	let currentPath = vscode.workspace.getWorkspaceFolder(currentDocument!)?.uri.fsPath;
+	const editor = vscode.window.activeTextEditor;
+	const currentDocument = editor?.document.uri;
+	const currentPath = vscode.workspace.getWorkspaceFolder(currentDocument!)?.uri.fsPath;
 	return currentPath;
 };
 
@@ -30,9 +30,9 @@ export const getCucumberRunnerObject = (): CucumberRunnerConfiguration => {
 
 	const currentPath = getProjectRoot();
 	console.log('Current Path: ', currentPath);
-	let file = `${currentPath}/.vscode/settings.json`;
+	const file = `${currentPath}/.vscode/settings.json`;
 	// skipped if setting is not correct
-	let isSkipped: boolean = true;
+	const isSkipped = true;
 	// Check that the file exists locally
 	if (!fs.existsSync(file)) {
 		if (!isSkipped) { throw new Error('Test Runner for Cucumber: .vscode/settings.json is not found \n'); }
@@ -149,7 +149,7 @@ export const createCommandToExecuteScenario = (cucumberRunnerConfiguration: Cucu
 		if (cucumberRunnerConfiguration.tool == "cucumber-js" && cucumberRunnerConfiguration.language == "javascript" || cucumberRunnerConfiguration.language == "typescript") {
 			toolCommands.set('cucumber-js', getCucumberJsScenarioExecutable(cucumberRunnerConfiguration,
 				` --name "${scenarioName}"`, currentFeatureFilePath!));
-			let commandeToExecuteScenario: string | undefined = toolCommands.get(cucumberRunnerConfiguration.tool);
+			const commandeToExecuteScenario: string | undefined = toolCommands.get(cucumberRunnerConfiguration.tool);
 			return (typeof commandeToExecuteScenario !== 'undefined') ? commandeToExecuteScenario : "";
 		} else {
 			vscode.window.showErrorMessage(

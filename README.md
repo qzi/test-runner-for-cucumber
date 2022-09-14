@@ -1,6 +1,6 @@
 # Test Runner for Cucumber
 
-This vscode extension intend to run the Cucumber program easily.
+This vscode extension intend to run the cucumber program easily.
 ​        
     
 ## Features
@@ -27,14 +27,13 @@ This experimental extension is designed for cucumber-js only currently,
  ```shell
  > npm install @cucumber/cucumber npx
  ```
-add `.vscode/settings.json` like this defalut setting(if no settings.json): 
+add `.vscode/settings.json` : 
 ```json
 {
     "test-runner-for-cucumber": {
-        "language": "javascript",
         "tool": "cucumber-js",
-        "script": "npx cucumber-js -c cucumber.js src/test/resources/features/**/*.feature"
-
+        "script": "npx cucumber-js -c cucumber.js src/test/**/*.feature",
+        "language": "javascript"
     }
 }
 ```
